@@ -28,8 +28,7 @@ CivicLens AI solves this bottleneck with a **dual-layer architecture**:
 - ✍️ **Bilingual Formal Complaint Generator**: Generates formal grievance letters in both **English** and **हिन्दी (Hindi)** with 1-click clipboard copy and `.txt` export.
 - 🗺️ **Geospatial Hotspot Map**: Real-time city map charting active civic emergencies across urban wards.
 - 📊 **Real-Time Visual Dashboard**: Interactive Plotly metrics and charts tracking categories, priority distribution, and high-risk hotspots.
-- 🕘 **In-Memory Session History**: Full session audit log with CSV export capability and zero external database overhead.
-- 🛡️ **Zero API Key Dependency**: Runs seamlessly offline with zero latency, zero cost, and 100% pitch stability.
+- 🛡️ **Fault-Tolerant Fallback Parser**: Equipped with an automated local heuristic fallback ensuring the application remains 100% operational during demo evaluations even if API access is unconfigured.
 
 ---
 
@@ -113,12 +112,22 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Launch Application (Zero Configuration Needed!)
+### 3. Configure Groq API Key
+For live inference with `llama-3.3-70b-versatile`, create a `.env` file from `.env.example`:
+```bash
+cp .env.example .env
+```
+Add your free Groq API key:
+```env
+GROQ_API_KEY=gsk_your_groq_api_key_here
+```
+*(Note: If no API key is provided or during network outages, CivicLens AI automatically operates in resilient fallback mode so demonstration never fails).*
+
+### 4. Launch Application
 ```bash
 streamlit run app.py
 ```
-Open your browser at `http://localhost:8501`.  
-*(No API keys, secrets, or external database configurations required — CivicLens AI runs 100% out of the box).*
+Open your browser at `http://localhost:8501`.
 
 ---
 
@@ -130,8 +139,10 @@ CivicLens-AI/
 ├── app.py              # Single monolithic Streamlit application with all modules
 ├── requirements.txt    # Lean dependencies (Streamlit, Groq, Pandas, Plotly, Dotenv)
 ├── README.md           # Project pitch, architecture, and instructions
-└── .gitignore          # Protected local files (.venv, __pycache__, etc.)
+├── .env.example        # Environment variable template for Groq API
+└── .gitignore          # Protected local files (.env, .venv, __pycache__, etc.)
 ```
+
 
 
 ---
