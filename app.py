@@ -54,7 +54,7 @@ SLA_MATRIX = {
     "HIGH": {
         "sla_hours": 48,
         "sla_text": "48 Hours (Priority Dispatch)",
-        "officer": "Superintending Engineer (PWD / Jal Board)",
+        "officer": "Superintending Engineer / Competent Zonal Authority",
         "escalation_level": "Level 2 — Divisional Chief Engineer",
     },
     "MODERATE": {
@@ -382,8 +382,8 @@ def generate_official_complaint(
     if language == "Hindi":
         reasons_text = "\n".join([f"  • {r}" for r in reasons_list])
         return f"""सेवा में,
-माननीय नगर निगम आयुक्त / मुख्य अधिशासी अभियंता,
-लोक निर्माण विभाग (PWD) एवं नागरिक प्रशासन प्राधिकरण।
+माननीय नगर निगम आयुक्त / सक्षम क्षेत्रीय प्राधिकारी,
+नागरिक प्रशासन एवं लोक निर्माण संभाग (Public Works Directorate)।
 
 दिनांक: {today}
 शिकायत संदर्भ संख्या: {ref_id}
@@ -427,8 +427,8 @@ def generate_official_complaint(
     # Default: English
     reasons_text = "\n".join([f"  • {r}" for r in reasons_list])
     return f"""TO:
-The Municipal Commissioner / Ward Executive Engineer,
-Civic Administration & Public Works Department (PWD).
+The Municipal Commissioner / Competent Zonal Authority,
+Municipal Corporation & Public Works Directorate.
 
 DATE: {today}
 GRIEVANCE REFERENCE ID: {ref_id}
@@ -1198,7 +1198,7 @@ def main():
 
             **Priority Tiers & Response SLA:**
             - **76 – 100**: 🔴 **CRITICAL** (24-Hour Mandatory SLA — Municipal Commissioner Escalation)
-            - **51 – 75**: 🟠 **HIGH** (48-Hour SLA — Superintending Engineer PWD)
+            - **51 – 75**: 🟠 **HIGH** (48-Hour SLA — Superintending Engineer / Zonal Authority)
             - **26 – 50**: 🟡 **MODERATE** (7-Day SLA — Ward Health Inspector)
             - **0 – 25**: 🟢 **LOW** (14-Day SLA — Helpdesk Routine Queue)
 
