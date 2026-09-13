@@ -1,7 +1,6 @@
 """
 CivicLens AI — Understand. Prioritize. Act.
-Next-Gen AI Civic Decision-Support System
-Built for Avalon OpenHack.
+Autonomous Decision-Support System for Civic Incident Triage.
 """
 
 import os
@@ -734,7 +733,7 @@ def main():
         st.markdown(
             """
             <div style="font-size: 0.8rem; color: #64748B;">
-            <b>Avalon OpenHack Edition</b><br>
+            <b>Autonomous Civic Edition</b><br>
             • Deterministic Scoring Engine<br>
             • Explainable Civic Priority<br>
             • Official Multi-lingual Dossiers<br>
