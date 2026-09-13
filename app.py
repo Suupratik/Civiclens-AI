@@ -220,59 +220,17 @@ def generate_explainability_reasons(extracted: dict) -> list[str]:
 
 
 # -----------------------------------------------------------------------------
-# Groq LLM & Information Extraction Engine
+# Semantic NLP Feature Extraction Engine (Deterministic & Rule-Based)
 # -----------------------------------------------------------------------------
-EXTRACTION_SYSTEM_PROMPT = """You are CivicLens AI's structured complaint information extractor.
-Analyze the user's natural-language civic complaint and output ONLY a valid JSON object.
-
-Extract and evaluate these exact fields:
-1. "category": Must be strictly one of: ["Road Damage", "Garbage & Sanitation", "Streetlight", "Water & Drainage", "Traffic", "Public Safety", "Other"]
-2. "location_summary": Concise location or context (e.g., "Outside DAV College Main Gate", "Sector 4 Market")
-3. "duration_text": How long the issue has persisted (e.g., "3 weeks", "2 days", "2 months", "Unspecified")
-4. "duration_score": Numerical rating 0-100 based on persistence (<3 days: 20, 1-3 weeks: 50, 1-3 months: 80, >3 months: 100)
-5. "safety_risk_score": Numerical rating 0-100 of physical danger (Low risk: 20, Moderate: 50, High: 80, Critical/Deadly: 100)
-6. "safety_risk_label": "Low", "Moderate", "High", or "Critical"
-7. "people_affected_score": Numerical rating 0-100 based on affected population (<10 people: 20, 10-100: 50, hundreds: 80, thousands/transit hub: 100)
-8. "people_affected_label": "Few", "Moderate", "High", or "Widespread"
-9. "frequency_score": Numerical rating 0-100 (Occasional/Sporadic: 25, Regular: 50, Frequent: 75, Constant/Daily: 100)
-10. "frequency_label": "Occasional", "Regular", "Frequent", or "Constant"
-11. "public_impact_score": Numerical rating 0-100 of overall civil disruption (Minor: 20, Moderate: 50, Significant: 80, Severe: 100)
-12. "public_impact_label": "Minor", "Moderate", "Significant", or "Severe"
-13. "has_incidents": boolean (true if actual accidents, falls, vehicle breakdowns, water contamination, or injuries have already occurred)
-14. "incident_details": Brief string describing specific accidents or damages mentioned, or "None reported"
-15. "recommended_action": Concise, actionable municipal instruction (e.g. "Immediate emergency patch-up and safety barricading required within 24 hours.")
-
-Output ONLY the JSON. Do not include markdown fences or other text.
-"""
-
-
-def extract_with_groq(text: str, api_key: str) -> dict:
-    """Call Groq API using Llama-3.3-70b-versatile with JSON response format."""
-    try:
-        from groq import Groq
-    except ImportError:
-        raise RuntimeError("groq package is not installed.")
-
-    client = Groq(api_key=api_key)
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-        messages=[
-            {"role": "system", "content": EXTRACTION_SYSTEM_PROMPT},
-            {"role": "user", "content": f"User complaint: {text}"},
-        ],
-        response_format={"type": "json_object"},
-        temperature=0.1,
-    )
-    raw_content = response.choices[0].message.content
-    return json.loads(raw_content)
-
-
-def extract_with_heuristics(text: str) -> dict:
+def extract_semantic_features(text: str) -> dict:
     """
-    Intelligent fallback heuristic parser for offline/demo mode.
-    Guarantees the app never crashes if the user does not have a Groq key ready.
+    Robust rule-based Natural Language Semantic Extractor.
+    Extracts category, persistence duration, safety threat, population impact,
+    recurrence frequency, systemic impact, and incident history directly from
+    natural-language complaint text without external API dependencies or latency.
     """
     text_lower = text.lower()
+
 
     if any(k in text_lower for k in ["pothole", "road", "tar", "asphalt", "crater", "speed breaker", "pavement"]):
         category = "Road Damage"
@@ -719,15 +677,7 @@ def main():
 
         st.markdown("---")
         st.markdown("#### ⚙️ Engine Status")
-
-        active_key = os.getenv("GROQ_API_KEY", "").strip()
-        if not active_key and hasattr(st, "secrets") and "GROQ_API_KEY" in st.secrets:
-            active_key = str(st.secrets["GROQ_API_KEY"]).strip()
-
-        if active_key:
-            st.success("🟢 AI Engine: Llama 3.3 Active")
-        else:
-            st.info("🟢 AI Engine: Deterministic Active")
+        st.success("🟢 Engine: Semantic NLP & Priority System (Active)")
 
         st.markdown("---")
         st.markdown(
@@ -809,15 +759,8 @@ def main():
                 st.warning("⚠️ Please provide a description of the civic problem before analyzing.")
             else:
                 with st.spinner("Analyzing complaint with NLP and calculating deterministic priority score..."):
-                    # Step 1: LLM or Heuristic Extraction
-                    try:
-                        if active_key:
-                            extracted = extract_with_groq(user_input, active_key)
-                        else:
-                            extracted = extract_with_heuristics(user_input)
-                    except Exception as e:
-                        st.warning(f"Groq API notice ({str(e)}). Falling back to resilient local heuristic parser.")
-                        extracted = extract_with_heuristics(user_input)
+                    # Step 1: Semantic NLP Feature Extraction
+                    extracted = extract_semantic_features(user_input)
 
                     # Step 2: Deterministic Priority Scoring
                     priority = calculate_priority_score(
@@ -1178,11 +1121,11 @@ def main():
 
             ### 🧠 The Solution: Dual-Layer Architecture
             CivicLens AI splits the problem cleanly:
-            1. **LLM Layer (Groq / Llama 3.3)**: Interprets fuzzy, noisy natural language and extracts objective attributes.
+            1. **Semantic NLP Feature Extractor**: Analyzes natural-language civic text through contextual keyword mapping, incident sentiment detection, temporal duration extraction, population density heuristics, and safety risk inference.
             2. **Deterministic Priority Engine (Python)**: Computes an auditable, transparent priority score based on weighted civil risk factors.
 
             > **Judge Pitch Talking Point:**
-            > *"We do NOT let the LLM hallucinate or guess arbitrary priority numbers. The LLM acts purely as an information extractor; our auditable Python scoring engine calculates the priority deterministically, making every decision explainable and legally sound."*
+            > *"We deliberately avoided black-box LLM API wrappers that hallucinate, experience latency, or fail when offline. CivicLens AI uses a robust rule-based semantic NLP extractor paired with an auditable mathematical scoring engine, making every decision explainable, transparent, and legally defensible."*
 
             ---
 
@@ -1206,10 +1149,11 @@ def main():
 
             ### 🛠️ Minimal Tech Stack
             - **Core Framework**: Python 3.12 + Streamlit
-            - **Language Model**: Groq API (`llama-3.3-70b-versatile`)
+            - **Natural Language Processing**: Rule-Based Semantic Feature Extractor
             - **Data & Visualizations**: Pandas + Plotly
-            - **Storage**: In-memory `st.session_state` (No SQL/Docker/Redis needed)
+            - **Storage**: In-memory `st.session_state` (Zero Database Overhead)
             """
+
         )
 
 
