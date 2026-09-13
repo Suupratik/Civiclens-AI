@@ -98,8 +98,8 @@ $$\text{Priority Score} = (0.30 \times \text{Safety}) + (0.25 \times \text{Peopl
 
 ### 1. Clone & Setup Virtual Environment
 ```bash
-git clone https://github.com/your-repo/CivicLens-AI.git
-cd CivicLens-AI
+git clone https://github.com/Suupratik/Civiclens-AI.git
+cd Civiclens-AI
 
 python -m venv .venv
 # On Windows:
@@ -113,22 +113,12 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. (Optional) Configure Groq API Key
-Create a `.env` file from `.env.example`:
-```bash
-cp .env.example .env
-```
-Add your free Groq API key:
-```env
-GROQ_API_KEY=gsk_your_groq_api_key_here
-```
-*(Note: If no key is set, CivicLens AI automatically operates in resilient offline demo mode).*
-
-### 4. Launch Application
+### 3. Launch Application (Zero Configuration Needed!)
 ```bash
 streamlit run app.py
 ```
-Open your browser at `http://localhost:8501`.
+Open your browser at `http://localhost:8501`.  
+*(No API keys, secrets, or external database configurations required — CivicLens AI runs 100% out of the box).*
 
 ---
 
@@ -140,9 +130,9 @@ CivicLens-AI/
 ├── app.py              # Single monolithic Streamlit application with all modules
 ├── requirements.txt    # Lean dependencies (Streamlit, Groq, Pandas, Plotly, Dotenv)
 ├── README.md           # Project pitch, architecture, and instructions
-├── .env.example        # Environment variable template
-└── .gitignore          # Protected files (.env, .venv, etc.)
+└── .gitignore          # Protected local files (.venv, __pycache__, etc.)
 ```
+
 
 ---
 
